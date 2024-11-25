@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black leo Engine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #search-bar {
+            width: 300px;
+            padding: 10px;
+        }
+        #results {
+            margin-top: 20px;
+            display: none; /* Hide results initially */
+        }
+        .result-item {
+            margin: 5px 0;
+        }
+        #a-to-z-btn {
+            margin-top: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .letter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 20px;
+        }
+        .letter-btn {
+            padding: 5px 10px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .left1 {
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search With LEO</h1>
+    <input type="text" id="search-bar" placeholder="Type to search..." oninput="search()">
+    <button id="a-to-z-btn" onclick="toggleAZ()">A-Z</button>
+
+    <div class="letter-buttons">
+        <button class="letter-btn" onclick="filterByLetter('A')">A</button>
+        <button class="letter-btn" onclick="filterByLetter('B')">B</button>
+        <button class="letter-btn" onclick="filterByLetter('C')">C</button>
+        <button class="letter-btn" onclick="filterByLetter('D')">D</button>
+        <button class="letter-btn" onclick="filterByLetter('E')">E</button>
+        <button class="letter-btn" onclick="filterByLetter('F')">F</button>
+        <button class="letter-btn" onclick="filterByLetter('G')">G</button>
+        <button class="letter-btn" onclick="filterByLetter('H')">H</button>
+        <button class="letter-btn" onclick="filterByLetter('I')">I</button>
+        <button class="letter-btn" onclick="filterByLetter('J')">J</button>
+        <button class="letter-btn" onclick="filterByLetter('K')">K</button>
+        <button class="letter-btn" onclick="filterByLetter('L')">L</button>
+        <button class="letter-btn" onclick="filterByLetter('M')">M</button>
+        <button class="letter-btn" onclick="filterByLetter('N')">N</button>
+        <button class="letter-btn" onclick="filterByLetter('O')">O</button>
+        <button class="letter-btn" onclick="filterByLetter('P')">P</button>
+        <button class="letter-btn" onclick="filterByLetter('Q')">Q</button>
+        <button class="letter-btn" onclick="filterByLetter('R')">R</button>
+        <button class="letter-btn" onclick="filterByLetter('S')">S</button>
+        <button class="letter-btn" onclick="filterByLetter('T')">T</button>
+        <button class="letter-btn" onclick="filterByLetter('U')">U</button>
+        <button class="letter-btn" onclick="filterByLetter('V')">V</button>
+        <button class="letter-btn" onclick="filterByLetter('W')">W</button>
+        <button class="letter-btn" onclick="filterByLetter('X')">X</button>
+        <button class="letter-btn" onclick="filterByLetter('Y')">Y</button>
+        <button class="letter-btn" onclick="filterByLetter('Z')">Z</button>
+    </div>
+
+    <div id="results"></div>
+    <h3>ver.25.11.2024(close pre-Alpha)</h3>
+    <a href="Black leo corporation.html">About Us</a>
+
+    <script>
+        let isAZSorted = false;
+
+        const searchData = [
+            { name: 'Amazon', link: 'https://amazon.com' },
+            { name: 'Apple', link: 'https://apple.com' },
+            { name: 'Aardvark', link: 'https://aardvark.com' },
+            { name: 'Bing', link: 'https://bing.com' },
+            { name: 'Booking.com', link: 'https://booking.com' },
+            { name: 'Best Buy', link: 'https://bestbuy.com' },
+            { name: 'Carrefour', link: 'https://carrefour.com' },
+            { name: 'Coca-Cola', link: 'https://coca-cola.com' },
+            { name: 'Dropbox', link: 'https://dropbox.com' },
+            { name: 'Etsy', link: 'https://etsy.com' },
+            { name: 'eBay', link: 'https://ebay.com' },
+            { name: 'Facebook', link: 'https://facebook.com' },
+            { name: 'Google', link: 'https://google.com' },
+            { name: 'GitHub', link: 'https://github.com' },
+            { name: 'Hello', link: 'https://hello.com' },
+            { name: 'Instagram', link: 'https://instagram.com' },
+            { name: 'LinkedIn', link: 'https://linkedin.com' },
+            { name: 'Netflix', link: 'https://netflix.com' },
+            { name: 'Nike', link: 'https://nike.com' },
+            { name: 'PayPal', link: 'https://paypal.com' },
+            { name: 'Pinterest', link: 'https://pinterest.com' },
+            { name: 'Reddit', link: 'https://reddit.com' },
+            { name: 'Slack', link: 'https://slack.com' },
+            { name: 'Spotify', link: 'https://spotify.com' },
+            { name: 'Twitter', link: 'https://twitter.com' },
+            { name: 'Uber', link: 'https://uber.com' },
+            { name: 'YouTube', link: 'https://youtube.com' },
+            { name: 'Zoom', link: 'https://zoom.us' }
+        ];
+
+        function search() {
+            const searchTerm = document.getElementById('search-bar').value.toLowerCase();
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';  // Clear previous results
+
+            if (searchTerm.length === 0) {
+                resultsContainer.style.display = 'none';  // Hide results if search term is empty
+                return;
+            }
+
+            const filteredResults = searchData.filter(item => item.name.toLowerCase().startsWith(searchTerm));
+
+            if (filteredResults.length > 0) {
+                // Sort results if A-Z is enabled
+                if (isAZSorted) {
+                    filteredResults.sort((a, b) => a.name.localeCompare(b.name));
+                }
+
+                filteredResults.forEach(item => {
+                    const resultElement = document.createElement('div');
+                    resultElement.classList.add('result-item');
+                    resultElement.innerHTML = `<a href="${item.link}" target="_blank">${item.name}</a>`;
+                    resultsContainer.appendChild(resultElement);
+                });
+
+                resultsContainer.style.display = 'block';  // Show results when there are matches
+            } else {
+                resultsContainer.innerHTML = 'No results found.';
+                resultsContainer.style.display = 'block';  // Show "no results" message
+            }
+        }
+
+        function toggleAZ() {
+            isAZSorted = !isAZSorted;  // Toggle A-Z sorting
+            const button = document.getElementById('a-to-z-btn');
+            button.innerHTML = isAZSorted ? 'Z-A' : 'A-Z';  // Change button text
+            search();  // Re-run the search to apply sorting
+        }
+
+        function filterByLetter(letter) {
+            const resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';  // Clear previous results
+
+            const filteredResults = searchData.filter(item => item.name.toLowerCase().startsWith(letter.toLowerCase()));
+
+            if (filteredResults.length > 0) {
+                filteredResults.forEach(item => {
+                    const resultElement = document.createElement('div');
+                    resultElement.classList.add('result-item');
+                    resultElement.innerHTML = `<a href="${item.link}" target="_blank">${item.name}</a>`;
+                    resultsContainer.appendChild(resultElement);
+                });
+
+                resultsContainer.style.display = 'block';  // Show results when there are matches
+            } else {
+                resultsContainer.innerHTML = 'No results found for this letter.';
+                resultsContainer.style.display = 'block';  // Show "no results" message
+            }
+        }
+    </script>
+</body>
+</html>
